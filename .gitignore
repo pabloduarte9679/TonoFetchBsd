@@ -1,0 +1,14 @@
+# Compiled binary
+tonofetch
+
+# Node.js (legacy JS version)
+node_modules/
+package-lock.json
+
+# Editor config
+.vscode/
+
+# OS files
+.DS_Store
+*.swp
+*~
