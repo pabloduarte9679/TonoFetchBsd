@@ -2,6 +2,7 @@
 
 TonoFetch is a custom, fast, and highly customizable CLI system information tool inspired by `fastfetch` and `neofetch`. It displays system information visually in the terminal alongside an ASCII logo, with support for themes, modules, and JSON export.
 
+This is an attempt to port this freebsd
 ## Features
 
 - **System Information**: Displays OS, Kernel, Uptime, Shell, CPU, RAM, Disk, etc.
