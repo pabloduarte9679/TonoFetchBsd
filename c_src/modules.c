@@ -7,14 +7,15 @@
 #include <fcntl.h>
 #include <pwd.h>
 #include <sys/utsname.h>
-#include <sys/sysinfo.h>
 #include <sys/statvfs.h>
 #include <ifaddrs.h>
 #include <arpa/inet.h>
 #include <net/if.h>
+#include <netinet/in.h>
 #include <ctype.h>
 #include <dirent.h>
 #include <glob.h>
+#include <sys/socket.h>
 
 /* ───────────────────────── OS ───────────────────────── */
 int mod_os(char *label, size_t lsz, char *value, size_t vsz) {
