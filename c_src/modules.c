@@ -5,6 +5,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <vm/vm_param.h>
+#include <sys/sysctl.h>
+#include <kvm.h>
+#include <math.h>
 #include <pwd.h>
 #include <sys/utsname.h>
 #include <sys/statvfs.h>
@@ -782,6 +787,8 @@ int mod_ram(char *label, size_t lsz, char *value, size_t vsz) {
 }
 
 /* ───────────────────────── Swap ──────────────────────── */
+/* 
+  linux version
 int mod_swap(char *label, size_t lsz, char *value, size_t vsz) {
     snprintf(label, lsz, "Swap");
     char buf[4096];
@@ -799,6 +806,43 @@ int mod_swap(char *label, size_t lsz, char *value, size_t vsz) {
     }
     snprintf(value, vsz, "Disabled");
     return 0;
+}
+
+*/ 
+
+int mod_swap(char *label, size_t lsz, char *value, size_t vsz){
+  snprintf(label, lsz, "Swap");
+  int mib[2], enabled;
+  size_t len;
+  mib[0] = CTL_VM;
+  mib[1] = VM_SWAPPING_ENABLED;
+  kvm_t *kd;
+  struct kvm_swap *swapinfo;
+  swapinfo = (struct kvm_swap*)malloc(sizeof(struct kvm_swap));
+  char errbuf[64];
+  len = sizeof(enabled);
+
+  sysctl(mib,2, &enabled, &len, NULL, 0);
+  if(enabled){
+    kd = kvm_openfiles(NULL, NULL, NULL, O_RDONLY,errbuf);
+    errbuf[63] = '\0';
+    if(!kd){
+        printf("error: %s\n", errbuf);
+      if(strstr(errbuf, "Permission denied") != NULL){
+        printf("add your user to kmem group\n");
+      }
+      return 1;
+    }
+
+    int n = kvm_getswapinfo(kd, swapinfo, n+1, 0);
+    double used_gb = round((swapinfo->ksw_used * getpagesize()) / 1e9);
+    double total_gb = round((swapinfo->ksw_total * getpagesize()) / 1e9);
+    int pct = (int)((used_gb * 100) / total_gb);
+    snprintf(value, vsz, "%.2f GiB / %.2f GiB (%d%%)", used_gb, total_gb, pct);
+  }else{
+    snprintf(value, vsz, "Disabled");
+  }
+  return 0;
 }
 
 /* ───────────────────────── Disk ──────────────────────── */
