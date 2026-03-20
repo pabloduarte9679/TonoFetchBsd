@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -O2
+CFLAGS = -Wall -Wextra -O2 -lkvm -lm
 SRCS = c_src/main.c c_src/util.c c_src/modules.c c_src/ascii.c c_src/themes.c c_src/config.c c_src/renderer.c
 TARGET = tonofetch
 
